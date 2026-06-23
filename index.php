@@ -8,7 +8,7 @@ $text = $data['message']['text'];
 $chatId = $data['message']['chat']['id'];
 
 function sendMessage ($chatId, $text) {
-  $url = "https://api.telegram.org/bot${TOKEN}/sendMessage";
+  $url = 'https://api.telegram.org/bot' . TOKEN . '/sendMessage';
   $options = [
     'http' => [
       'method' => 'POST',
