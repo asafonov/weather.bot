@@ -1,25 +1,14 @@
 <?php
 
-require_once('config.sample.php');
-
-$data = file_get_contents('php://input');
-$data = json_decode($data, true);
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
 $text = $data['message']['text'];
 $chatId = $data['message']['chat']['id'];
 
-function sendMessage ($chatId, $text) {
-  $url = 'https://api.telegram.org/bot' . TOKEN . '/sendMessage';
-  $options = [
-    'http' => [
-      'method' => 'POST',
-      'content' => http_build_query([
-        'chat_id' => $chatId,
-        'text' => $text
-      ])
-    ]
-  ];
-  $context = stream_context_create($options);
-  file_get_contents($url, false, $context);
+if ($text && $chatId) {
+  $jobId = uniqid();
+  file_put_contents("/tmp/$jobId", $input);
+  exec('php ./worker.php --job-id=' . $jobId . ' > /dev/null 2>&1 &');
 }
 
-sendMessage($chatId, "Got ${text}");
+die();
