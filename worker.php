@@ -1,6 +1,6 @@
 <?php
 
-require_once('config.sample.php');
+require_once('config.php');
 
 function sendMessage ($chatId, $text) {
   $url = 'https://api.telegram.org/bot' . TOKEN . '/sendMessage';
@@ -18,7 +18,7 @@ function sendMessage ($chatId, $text) {
   file_get_contents($url, false, $context);
 }
 
-if (isset($argv[1])) {
+if (isset($argv[1]) && file_exists('/tmp/' . $argv[1])) {
   $data = file_get_contents('/tmp/' . $argv[1]);
   $data = json_decode($data, true);
   $text = $data['message']['text'];
