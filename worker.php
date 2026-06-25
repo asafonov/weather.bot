@@ -24,4 +24,5 @@ if (isset($argv[1]) && file_exists('/tmp/' . $argv[1])) {
   $text = $data['message']['text'];
   $chatId = $data['message']['chat']['id'];
   sendMessage($chatId, 'Got ' . $text);
+  unlink('/tmp/' . $argv[1]);
 }
