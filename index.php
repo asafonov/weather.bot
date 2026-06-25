@@ -1,5 +1,7 @@
 <?php
 
+require_once('config.php');
+
 try {
   $input = file_get_contents('php://input');
   $data = json_decode($input, true);
@@ -9,7 +11,8 @@ try {
   if ($text && $chatId) {
     $jobId = uniqid();
     file_put_contents("/tmp/$jobId", $input);
-    exec('php ./worker.php --job-id=' . $jobId . ' > /dev/null 2>&1 &');
+    $workerCommand = PHP_BIN . ' ' . WORKER_PATH . '/worker.php ' . $jobId . ' > /dev/null 2>&1 &';
+    exec($workerCommand);
   }
 } catch (Exception $e) {
   die();
