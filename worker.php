@@ -18,11 +18,11 @@ function sendMessage ($chatId, $text) {
   file_get_contents($url, false, $context);
 }
 
-if (isset($argv[1]) && file_exists('/tmp/' . $argv[1])) {
-  $data = file_get_contents('/tmp/' . $argv[1]);
+if (isset($argv[1]) && file_exists(WORKER_CACHE_PATH . '/' . $argv[1])) {
+  $data = file_get_contents(WORKER_CACHE_PATH . '/' . $argv[1]);
   $data = json_decode($data, true);
   $text = $data['message']['text'];
   $chatId = $data['message']['chat']['id'];
   sendMessage($chatId, 'Got ' . $text);
-  unlink('/tmp/' . $argv[1]);
+  unlink(WORKER_CACHE_PATH . '/' . $argv[1]);
 }

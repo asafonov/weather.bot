@@ -10,7 +10,7 @@ try {
 
   if ($text && $chatId) {
     $jobId = uniqid();
-    file_put_contents("/tmp/$jobId", $input);
+    file_put_contents(WORKER_CACHE_PATH . "/$jobId", $input);
     $workerCommand = PHP_BIN . ' ' . WORKER_PATH . '/worker.php ' . $jobId . ' > /dev/null 2>&1 &';
     exec($workerCommand);
   }
