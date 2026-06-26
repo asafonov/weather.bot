@@ -2,6 +2,10 @@
 
 require_once('config.php');
 
+function workerLog ($msg) {
+  file_put_contents(WORKER_LOG_PATH . '/weather.bot.error.log', date('Y-m-d H:i:s', time()) . '   ' . "$msg\n", FILE_APPEND | LOCK_EX);
+}
+
 function sendMessage ($chatId, $text) {
   $url = 'https://api.telegram.org/bot' . TOKEN . '/sendMessage';
   $options = [
@@ -15,7 +19,7 @@ function sendMessage ($chatId, $text) {
     ]
   ];
   $context = stream_context_create($options);
-  file_get_contents($url, false, $context);
+  return file_get_contents($url, false, $context);
 }
 
 if (isset($argv[1]) && file_exists(WORKER_CACHE_PATH . '/' . $argv[1])) {
@@ -27,12 +31,19 @@ if (isset($argv[1]) && file_exists(WORKER_CACHE_PATH . '/' . $argv[1])) {
 
   while ($try < MAX_RETRIES) {
     try {
-      sendMessage($chatId, 'Got ' . $text);
-      unlink(WORKER_CACHE_PATH . '/' . $argv[1]);
-      break;
+      $ret = sendMessage($chatId, 'Got ' . $text);
+      $ret = json_decode($ret, true);
+
+      if (isset($ret['ok']) && $ret['ok']) {
+        unlink(WORKER_CACHE_PATH . '/' . $argv[1]);
+        break;
+      } else {
+        ++$try;
+        workerLog('API returned the following result: ' . json_encode($ret));
+      }
     } catch (Exception $e) {
       ++$try;
-      file_put_contents(WORKER_LOG_PATH . '/worker.bot.error.log', json_encode($e), FILE_APPEND | LOCK_EX);
+      workerLog(json_encode($e));
     }
   }
 }
