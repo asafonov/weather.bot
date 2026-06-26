@@ -32,7 +32,7 @@ if (isset($argv[1]) && file_exists(WORKER_CACHE_PATH . '/' . $argv[1])) {
       break;
     } catch (Exception $e) {
       ++$try;
-      file_put_contents(WORKER_LOG_PATH . '/worker.bot.error.log', json_encode($e));
+      file_put_contents(WORKER_LOG_PATH . '/worker.bot.error.log', json_encode($e), FILE_APPEND | LOCK_EX);
     }
   }
 }
