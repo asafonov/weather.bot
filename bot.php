@@ -211,7 +211,7 @@ function preparePlace ($place) {
 }
 
 function makeSenseOfData ($data) {
-  $reply = "Got you info about weather in ${data[0]['place']}:\nTemperature is ${data[0]['temp']}, feels like ${data[0]['feels_like']}, ${data[0]['description']}.\nThe wind is from ${data[0]['wind_direction']} with a speed of ${data[0]['wind_speed']} m/s";
+  $reply = "Got you info about weather in {$data[0]['place']}:\nTemperature is {$data[0]['temp']}, feels like {$data[0]['feels_like']}, {$data[0]['description']}.\nThe wind is from the {$data[0]['wind_direction']} with a speed of {$data[0]['wind_speed']} m/s";
   return $reply;
 }
 
