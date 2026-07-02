@@ -168,21 +168,21 @@ function formatTemp ($temp) {
 
 function getWindDirection ($deg) {
   if ($deg > 337.5 || $deg <= 22.5) {
-    return 'N';
+    return 'North';
   } else if ($deg > 22.5 && $deg <= 67.5) {
-    return 'NE';
+    return 'North-East';
   } else if ($deg > 67.5 && $deg <= 112.5) {
-    return 'E';
+    return 'East';
   } else if ($deg > 112.5 && $deg <= 157.5) {
-    return 'SE';
+    return 'South-East';
   } else if ($deg > 157.5 && $deg <= 202.5) {
-    return 'S';
+    return 'South';
   } else if ($deg > 202.5 && $deg <= 247.5) {
-    return 'SW';
+    return 'South-West';
   } else if ($deg > 247.5 && $deg <= 292.5) {
-    return 'W';
+    return 'West';
   } else {
-    return 'NW';
+    return 'North-West';
   }
 }
 
@@ -210,6 +210,11 @@ function preparePlace ($place) {
   return strtolower(preg_replace('/[^A-z ]/', '', $place));
 }
 
+function makeSenseOfData ($data) {
+  $reply = "Got you info about weather in ${data[0]['place']}:\nTemperature is ${data[0]['temp']}, feels like ${data[0]['feels_like']}, ${data[0]['description']}.\nThe wind is from ${data[0]['wind_direction']} with a speed of ${data[0]['wind_speed']} m/s";
+  return $reply;
+}
+
 function doLogic ($data) {
   $text = $data['message']['text'];
   $chatId = $data['message']['chat']['id'];
@@ -231,9 +236,10 @@ function doLogic ($data) {
   }
 
   $data = weather($place);
+  $reply = makeSenseOfData($data);
 
   return [
-    'text' => json_encode($data),
+    'text' => $reply,
     'chat_id' => $chatId
   ];
 }
