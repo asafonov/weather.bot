@@ -168,21 +168,21 @@ function formatTemp ($temp) {
 
 function getWindDirection ($deg) {
   if ($deg > 337.5 || $deg <= 22.5) {
-    return 'North';
+    return 'north';
   } else if ($deg > 22.5 && $deg <= 67.5) {
-    return 'North-East';
+    return 'northeast';
   } else if ($deg > 67.5 && $deg <= 112.5) {
-    return 'East';
+    return 'east';
   } else if ($deg > 112.5 && $deg <= 157.5) {
-    return 'South-East';
+    return 'southeast';
   } else if ($deg > 157.5 && $deg <= 202.5) {
-    return 'South';
+    return 'south';
   } else if ($deg > 202.5 && $deg <= 247.5) {
-    return 'South-West';
+    return 'southwest';
   } else if ($deg > 247.5 && $deg <= 292.5) {
-    return 'West';
+    return 'west';
   } else {
-    return 'North-West';
+    return 'northwest';
   }
 }
 
@@ -197,6 +197,7 @@ function formatWeatherData ($data) {
     'clouds' => $data['clouds']['all'],
     'humidity' => $data['main']['humidity'],
     'wind_speed' => round($data['wind']['speed'] * 10) / 10,
+    'gust' => round($data['wind']['gust'] * 10) / 10,
     'wind_direction' => getWindDirection($data['wind']['deg']),
     'pressure' => intval($pressure * 0.75006)
   ];
@@ -210,7 +211,69 @@ function preparePlace ($place) {
   return strtolower(preg_replace('/[^A-z ]/', '', $place));
 }
 
+function getDataByDays ($data) {
+  $ret = ['now' => $data[0]];
+  $now = time();
+  $today = date('Y-m-d', $now + $data[0]['timezone']);
+  $tomorrow = date('Y-m-d', $now + $data[0]['timezone'] + 24*3600);
+  $prev_date = $today;
+  $dayNum = 1;
+  $index = 'today';
+
+  for ($i = 0, $j = count($data); $i < $j; ++$i) {
+    $date = substr($data[$i]['date'], 0, 10);
+
+    if ($date !== $prev_date  || $i === 0) {
+      if ($i > 0) {
+        asort($ret[$index]['wind_direction'], SORT_NUMERIC);
+        asort($ret[$index]['description'], SORT_NUMERIC);
+      }
+
+      $index = $prev_date === $today ? 'today' : 'tomorrow';
+
+      if ($prev_date === $tomorrow) {
+        break;
+      }
+
+      $dayNum = 1;
+      $ret[$index]['max_temp'] = -255;
+      $ret[$index]['min_temp'] = 255;
+      $ret[$index]['wind'] = 0;
+      $ret[$index]['gust'] = 0;
+      $ret[$index]['max_rain'] = 0;
+      $ret[$index]['total_rain'] = 0;
+      $ret[$index]['total_snow'] = 0;
+      $ret[$index]['max_snow'] = 0;
+      $ret[$index]['clouds'] = 0;
+      $ret[$index]['pressure'] = 0;
+      $ret[$index]['wind_direction'] = [];
+      $ret[$index]['description'] = [];
+    }
+
+    $ret[$index]['max_temp'] = max($ret[$index]['max_temp'], $data[$i]['temp']);
+    $ret[$index]['min_temp'] = min($ret[$index]['min_temp'], $data[$i]['temp']);
+    $ret[$index]['wind'] = max($ret[$index]['wind'], $data[$i]['wind']);
+    $ret[$index]['gust'] = max($ret[$index]['gust'], $data[$i]['gust']);
+    $ret[$index]['max_rain'] = max($ret[$index]['max_rain'], $data[$i]['rain']);
+    $ret[$index]['total_rain'] += $data[$i]['rain'];
+    $ret[$index]['max_snow'] = max($ret[$index]['max_snow'], $data[$i]['snow']);
+    $ret[$index]['total_snow'] += $data[$i]['snow'];
+    $ret[$index]['clouds'] += $data[$i]['clouds'];
+    $ret[$index]['pressure'] += $data[$i]['pressure'];
+    $ret[$index]['numDays'] = $dayNum;
+    $ret[$index]['description'] = isset($ret[$index]['description']) ? $ret[$index]['description'] + 1 : 1;
+    $ret[$index]['wind_direction'] = isset($ret[$index]['wind_direction']) ? $ret[$index]['wind_direction'] + 1 : 1;
+
+    $prev_date = $date;
+    ++$dayNum;
+  }
+
+  return $ret;
+}
+
 function makeSenseOfData ($data) {
+  $data = getDataByDays($data);
+
   $reply = "Got you info about weather in {$data[0]['place']}:\nTemperature is {$data[0]['temp']}, feels like {$data[0]['feels_like']}, {$data[0]['description']}.\nThe wind is from the {$data[0]['wind_direction']} with a speed of {$data[0]['wind_speed']} m/s";
   return $reply;
 }
