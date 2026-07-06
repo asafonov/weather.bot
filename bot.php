@@ -272,12 +272,28 @@ function getDataByDays ($data) {
 }
 
 function getWindSpeedDescription ($wind_speed) {
-  if ($wind_speed < 5) {
-    return 'light';
+  if ($wind_speed < 3.4) {
+    return 'light breeze';
+  } elseif ($wind_speed < 5.5) {
+    return 'gentle breeze';
   } elseif ($wind_speed < 8) {
-    return 'moderate';
+    return 'moderate breeze';
+  } elseif ($wind_speed < 10.8) {
+    return 'fresh breeze';
+  } elseif ($wind_speed < 13.9) {
+    return 'strong breeze';
+  } elseif ($wind_speed < 17.2) {
+    return 'near gale';
+  } elseif ($wind_speed < 20.8) {
+    return 'gale';
+  } elseif ($wind_speed < 24.5) {
+    return 'strong gale';
+  } elseif ($wind_speed < 28.5) {
+    return 'storm';
+  } elseif ($wind_speed < 32.7) {
+    return 'violent storm';
   } else {
-    return 'strong';
+    return 'hurricane';
   }
 }
 
@@ -285,7 +301,7 @@ function makeSenseOfData ($data) {
   $data = getDataByDays($data);
   $wind_description = getWindSpeedDescription($data['now']['wind_speed']);
 
-  $reply = "The weather conditions in {$data['now']['place']} now feature {$data['now']['description']}. The current temperature is {$data['now']['temp']}°C and it feels like {$data['now']['feels_like']}°C. The wind is {$wind_description}, coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts up to {$data['now']['gust']} m/s. The atmospheric pressure is {$data['now']['pressure']} mm Hg.";
+  $reply = "The weather in {$data['now']['place']} now features {$data['now']['description']}. The current temperature is {$data['now']['temp']}°C and it feels like {$data['now']['feels_like']}°C, thanks to humidity {$data['now']['humidity']}%. The wind is {$wind_description}, coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts up to {$data['now']['gust']} m/s. The atmospheric pressure is {$data['now']['pressure']} mm Hg.";
 
   return $reply;
 }
