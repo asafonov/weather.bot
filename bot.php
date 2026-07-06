@@ -320,22 +320,22 @@ function makeSenseOfData ($data) {
   $data = getDataByDays($data);
   $wind_description = getWindSpeedDescription($data['now']['wind_speed']);
   $today_wind_description = getWindSpeedDescription($data['today']['wind']);
-  $today_description_add = count($data['today']['description']) > 1 ? ' with ' . $data['today']['description'][1] : '';
+  $today_description_add = count($data['today']['description']) > 1 ? ' accompanied by ' . $data['today']['description'][1] : '';
   $today_pressure = intval($data['today']['pressure'] / $data['today']['numDays']);
-  $today_rain = isset($data['today']['rain_start']) ? "Rain is from {$data['today']['rain_start']} " . (isset($data['today']['rain_end']) ? "until {$data['today']['rain_end']}" : 'until the end of the day') . '. ' : '';
-  $today_snow = isset($data['today']['snow_start']) ? "Snow is from {$data['today']['snow_start']} " . (isset($data['today']['snow_end']) ? "until {$data['today']['snow_end']}" : 'until the end of the day') . '. ' : '';
+  $today_rain = isset($data['today']['rain_start']) ? "Rainfall is forecast between {$data['today']['rain_start']} " . (isset($data['today']['rain_end']) ? "and {$data['today']['rain_end']}" : 'and the end of the day') . '. ' : '';
+  $today_snow = isset($data['today']['snow_start']) ? "Snowfall is forecast between {$data['today']['snow_start']} " . (isset($data['today']['snow_end']) ? "and {$data['today']['snow_end']}" : 'and the end of the day') . '. ' : '';
   $tomorrow_wind_description = getWindSpeedDescription($data['tomorrow']['wind']);
   $tomorrow_description_add = count($data['tomorrow']['description']) > 1 ? ' with ' . $data['tomorrow']['description'][1] : '';
   $tomorrow_pressure = intval($data['tomorrow']['pressure'] / $data['tomorrow']['numDays']);
-  $tomorrow_rain = isset($data['tomorrow']['rain_start']) ? "Rain is expected to start at {$data['tomorrow']['rain_start']} and " . (isset($data['tomorrow']['rain_end']) ? "to end at {$data['tomorrow']['rain_end']}" : 'to continue during the day')  . '. ' : '';
+  $tomorrow_rain = isset($data['tomorrow']['rain_start']) ? "Precipitation is predicted to start at {$data['tomorrow']['rain_start']} and last until " . (isset($data['tomorrow']['rain_end']) ? "{$data['tomorrow']['rain_end']}" : 'the end of the day')  . '. ' : '';
   $tomorrow_snow = isset($data['tomorrow']['snow_start']) ? "Snow is from {$data['tomorrow']['snow_start']} " . (isset($data['tomorrow']['snow_end']) ? "until {$data['tomorrow']['snow_end']}" : 'until the end of the day') . '. ' : '';
 
 
-  $reply = "The weather in {$data['now']['place']} now features {$data['now']['description']}. The current temperature is {$data['now']['temp']}°C and it feels like {$data['now']['feels_like']}°C, thanks to humidity {$data['now']['humidity']}%. The wind is {$wind_description} coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts up to {$data['now']['gust']} m/s. The atmospheric pressure is {$data['now']['pressure']} mm Hg.";
+  $reply = "The current weather in {$data['now']['place']} is characterised by {$data['now']['description']}. The air temperature stands at {$data['now']['temp']}°C, while the perceived temperature is {$data['now']['feels_like']}°C - due to the {$data['now']['humidity']}% humidity. The wind is a {$wind_description} coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts reaching up to {$data['now']['gust']} m/s. Atmospheric pressure is recorded at {$data['now']['pressure']} mm Hg.";
 
-  $reply .= "\n\nLater today the temperature will swing between {$data['today']['min_temp']}°C and {$data['today']['max_temp']}°C. You will notice some {$data['today']['description'][0]}{$today_description_add} and a {$today_wind_description} from the {$data['today']['wind_direction'][0]} blowing at {$data['today']['wind']} m/s with brief gusts up to {$data['today']['gust']} m/s. {$today_rain}{$today_snow}Pressure is around {$today_pressure} mm Hg.";
+  $reply .= "\n\nLater today, temperatures are expected to fluctuate between {$data['today']['min_temp']}°C and {$data['today']['max_temp']}°C. You will notice {$data['today']['description'][0]}{$today_description_add} and a {$today_wind_description} from the {$data['today']['wind_direction'][0]} with a speed of {$data['today']['wind']} m/s; brief gusts may reach {$data['today']['gust']} m/s. {$today_rain}{$today_snow}Pressure will remain around {$today_pressure} mm Hg.";
 
-  $reply .= "\n\nTomorrow the temperature is expected to be around {$data['tomorrow']['min_temp']}°C at night and up to {$data['tomorrow']['max_temp']}°C during the day. You may expect to see {$data['tomorrow']['description'][0]}{$tomorrow_description_add}. {$tomorrow_rain}{$tomorrow_snow}The wind is a {$tomorrow_wind_description} from the {$data['tomorrow']['wind_direction'][0]} with the speed up to {$data['tomorrow']['wind']} m/s. Gusts are expected to be around {$data['tomorrow']['gust']} m/s. The atmospheric pressure is {$tomorrow_pressure} mm Hg.";
+  $reply .= "\n\nTomorrow, overnighttemperatures are projected to drop to around {$data['tomorrow']['min_temp']}°C, rising to a maximum {$data['tomorrow']['max_temp']}°C during the day. The sky will feature {$data['tomorrow']['description'][0]}{$tomorrow_description_add}. {$tomorrow_rain}{$tomorrow_snow}The wind will be a {$tomorrow_wind_description} from the {$data['tomorrow']['wind_direction'][0]}; with the speeds up to {$data['tomorrow']['wind']} m/s and gusts potentially reaching {$data['tomorrow']['gust']} m/s. Atmospheric pressure is anticipated to be approximately {$tomorrow_pressure} mm Hg.";
 
   return $reply;
 }
