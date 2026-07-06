@@ -305,10 +305,15 @@ function makeSenseOfData ($data) {
   $today_wind_description = getWindSpeedDescription($data['today']['wind']);
   $today_description_add = count($data['today']['description']) > 1 ? ' with ' . $data['today']['description'][1] : '';
   $today_pressure = intval($data['today']['pressure'] / $data['today']['numDays']);
+  $tomorrow_wind_description = getWindSpeedDescription($data['tomorrow']['wind']);
+  $tomorrow_description_add = count($data['tomorrow']['description']) > 1 ? ' with ' . $data['tomorrow']['description'][1] : '';
+  $tomorrow_pressure = intval($data['tomorrow']['pressure'] / $data['tomorrow']['numDays']);
 
   $reply = "The weather in {$data['now']['place']} now features {$data['now']['description']}. The current temperature is {$data['now']['temp']}°C and it feels like {$data['now']['feels_like']}°C, thanks to humidity {$data['now']['humidity']}%. The wind is {$wind_description} coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts up to {$data['now']['gust']} m/s. The atmospheric pressure is {$data['now']['pressure']} mm Hg.";
 
-  $reply .= "\n\nLater today the temperature will swing between {$data['today']['min_temp']}°C and {$data['today']['max_temp']}°C. You will notice some {$data['today']['description'][0]}{$today_description_add} and a {$today_wind_description} blowing at {$data['today']['wind']} m/s with brief gusts up to {$data['today']['gust']} m/s. Pressure is around {$today_pressure} mm Hg.";
+  $reply .= "\n\nLater today the temperature will swing between {$data['today']['min_temp']}°C and {$data['today']['max_temp']}°C. You will notice some {$data['today']['description'][0]}{$today_description_add} and a {$today_wind_description} from the {$data['today']['wind_direction'][0]} blowing at {$data['today']['wind']} m/s with brief gusts up to {$data['today']['gust']} m/s. Pressure is around {$today_pressure} mm Hg.";
+
+  $reply .= "\n\nTomorrow the temperature is expected to be around {$data['tomorrow']['min_temp']}°C at night and up to {$data['tomorrow']['max_temp']}°C during the day. You may expect to see {$data['tomorrow']['description'][0]}{$tomorrow_description_add}. The wind is {$tomorrow_wind_description} from the {$data['tomorrow']['wind_direction'][0]} with the speed up to {$data['tomorrow']['wind']} m/s. Gusts are expected to be around {$data['tomorrow']['gust']} m/s. The atmospheric pressure is {$tomorrow_pressure} mm Hg.";
 
   return $reply;
 }
