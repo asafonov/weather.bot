@@ -341,7 +341,3 @@ function doLogic ($data) {
     'chat_id' => $chatId
   ];
 }
-
-$data = weather('Tver');
-$reply = makeSenseOfData($data);
-die($reply);
