@@ -226,7 +226,9 @@ function getDataByDays ($data) {
     if ($date !== $prev_date  || $i === 0) {
       if ($i > 0) {
         asort($ret[$index]['wind_direction'], SORT_NUMERIC);
+        $ret[$index]['wind_direction'] = array_keys($ret[$index]['wind_direction']);
         asort($ret[$index]['description'], SORT_NUMERIC);
+        $ret[$index]['description'] = array_keys($ret[$index]['description']);
       }
 
       $index = $date === $today ? 'today' : 'tomorrow';
@@ -300,8 +302,13 @@ function getWindSpeedDescription ($wind_speed) {
 function makeSenseOfData ($data) {
   $data = getDataByDays($data);
   $wind_description = getWindSpeedDescription($data['now']['wind_speed']);
+  $today_wind_description = getWindSpeedDescription($data['today']['wind']);
+  $today_description_add = count($data['today']['description']) > 1 ? ' with ' . $data['today']['description'][1] : '';
+  $today_pressure = intval($data['today']['pressure'] / $data['today']['numDays']);
 
-  $reply = "The weather in {$data['now']['place']} now features {$data['now']['description']}. The current temperature is {$data['now']['temp']}°C and it feels like {$data['now']['feels_like']}°C, thanks to humidity {$data['now']['humidity']}%. The wind is {$wind_description}, coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts up to {$data['now']['gust']} m/s. The atmospheric pressure is {$data['now']['pressure']} mm Hg.";
+  $reply = "The weather in {$data['now']['place']} now features {$data['now']['description']}. The current temperature is {$data['now']['temp']}°C and it feels like {$data['now']['feels_like']}°C, thanks to humidity {$data['now']['humidity']}%. The wind is {$wind_description} coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts up to {$data['now']['gust']} m/s. The atmospheric pressure is {$data['now']['pressure']} mm Hg.";
+
+  $reply .= "\n\nLater today the temperature will swing between {$data['today']['min_temp']}°C and {$data['today']['max_temp']}°C. You will notice some {$data['today']['description'][0]}{$today_description_add} and a {$today_wind_description} blowing at {$data['today']['wind']} m/s with brief gusts up to {$data['today']['gust']} m/s. Pressure is around {$today_pressure} mm Hg.";
 
   return $reply;
 }
@@ -334,3 +341,7 @@ function doLogic ($data) {
     'chat_id' => $chatId
   ];
 }
+
+$data = weather('Tver');
+$reply = makeSenseOfData($data);
+die($reply);
