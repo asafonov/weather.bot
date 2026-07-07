@@ -227,9 +227,9 @@ function getDataByDays ($data) {
     if ($date !== $prev_date  || $i === 0) {
       if ($i > 0) {
         asort($ret[$index]['wind_direction'], SORT_NUMERIC);
-        $ret[$index]['wind_direction'] = array_keys($ret[$index]['wind_direction']);
+        $ret[$index]['wind_direction'] = array_reverse(array_keys($ret[$index]['wind_direction']));
         asort($ret[$index]['description'], SORT_NUMERIC);
-        $ret[$index]['description'] = array_keys($ret[$index]['description']);
+        $ret[$index]['description'] = array_reverse(array_keys($ret[$index]['description']));
       }
 
       $index = $date === $today ? 'today' : 'tomorrow';
@@ -281,7 +281,7 @@ function getDataByDays ($data) {
     $ret[$index]['pressure'] += $data[$i]['pressure'];
     $ret[$index]['numDays'] = $dayNum;
     $ret[$index]['wind_direction'][$data[$i]['wind_direction']] = isset($ret[$index]['wind_direction'][$data[$i]['wind_direction']]) ? $ret[$index]['wind_direction'][$data[$i]['wind_direction']] + 1 : 1;
-    $ret[$index]['description'][$data[$i]['description']] = isset($ret[$index]['description'][$data[$i]['description']]) ? $ret[$index]['description'][$data[$i]['description']] : 1;
+    $ret[$index]['description'][$data[$i]['description']] = isset($ret[$index]['description'][$data[$i]['description']]) ? $ret[$index]['description'][$data[$i]['description']] + 1 : 1;
 
     $prev_date = $date;
     ++$dayNum;
