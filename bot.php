@@ -201,14 +201,15 @@ function formatWeatherData ($data) {
     'wind_direction' => getWindDirection($data['wind']['deg']),
     'pressure' => intval($pressure * 0.75006)
   ];
-  isset($data['rain']) && ($ret['rain'] = $data['rain']['3h'] ? $data['rain']['3h'] / 3 : $data['rain']['1h']);
-  isset($data['snow']) && ($ret['snow'] = $data['snow']['3h'] ? $data['snow']['3h'] / 3 : $data['snow']['1h']);
+  isset($data['rain']) && ($ret['rain'] = isset($data['rain']['3h']) ? $data['rain']['3h'] / 3 : $data['rain']['1h']);
+  isset($data['snow']) && ($ret['snow'] = isset($data['snow']['3h']) ? $data['snow']['3h'] / 3 : $data['snow']['1h']);
 
   return $ret;
 }
 
 function preparePlace ($place) {
-  return strtolower(preg_replace('/[^A-z ]/', '', $place));
+  $place = strtolower(preg_replace('/[^A-z ]/', '', $place));
+  return trim($place);
 }
 
 function getDataByDays ($data) {
