@@ -335,7 +335,7 @@ function makeSenseOfData ($data) {
 
   $reply .= "\n\nLater today, temperatures are expected to fluctuate between {$data['today']['min_temp']}°C and {$data['today']['max_temp']}°C. You will notice {$data['today']['description'][0]}{$today_description_add} and a {$today_wind_description} from the {$data['today']['wind_direction'][0]} with a speed of {$data['today']['wind']} m/s; brief gusts may reach {$data['today']['gust']} m/s. {$today_rain}{$today_snow}Pressure will remain around {$today_pressure} mm Hg.";
 
-  $reply .= "\n\nTomorrow, overnighttemperatures are projected to drop to around {$data['tomorrow']['min_temp']}°C, rising to a maximum {$data['tomorrow']['max_temp']}°C during the day. The sky will feature {$data['tomorrow']['description'][0]}{$tomorrow_description_add}. {$tomorrow_rain}{$tomorrow_snow}The wind will be a {$tomorrow_wind_description} from the {$data['tomorrow']['wind_direction'][0]}; with the speeds up to {$data['tomorrow']['wind']} m/s and gusts potentially reaching {$data['tomorrow']['gust']} m/s. Atmospheric pressure is anticipated to be approximately {$tomorrow_pressure} mm Hg.";
+  $reply .= "\n\nTomorrow, overnight temperatures are projected to drop to around {$data['tomorrow']['min_temp']}°C, rising to a maximum {$data['tomorrow']['max_temp']}°C during the day. The sky will feature {$data['tomorrow']['description'][0]}{$tomorrow_description_add}. {$tomorrow_rain}{$tomorrow_snow}The wind will be a {$tomorrow_wind_description} from the {$data['tomorrow']['wind_direction'][0]}; with the speeds up to {$data['tomorrow']['wind']} m/s and gusts potentially reaching {$data['tomorrow']['gust']} m/s. Atmospheric pressure is anticipated to be approximately {$tomorrow_pressure} mm Hg.";
 
   return $reply;
 }
