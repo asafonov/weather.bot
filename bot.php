@@ -390,7 +390,7 @@ function doLogic ($input) {
     $scheduleUpdateHour = date('H', $scheduleUpdateTime);
     $taskDir = WORKER_CACHE_PATH . "/{$scheduleUpdateHour}";
     mkdir($taskDir);
-    file_put_contents("{$taskDir}/{$chatId}");
+    file_put_contents("{$taskDir}/{$chatId}", json_encode($input));
   }
 
   return $reply;
