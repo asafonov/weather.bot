@@ -395,3 +395,12 @@ function doLogic ($input) {
 
   return $reply;
 }
+
+function test() {
+  $input = ['message' => [
+    'text' => 'Moscow',
+    'chat' => ['id' => 'chat_id']
+  ]];
+  $reply = doLogic($input);
+  print_r($reply);
+}
