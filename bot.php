@@ -380,6 +380,11 @@ function getForecastMessageAndData ($input) {
   ], $data];
 }
 
+function doCronLogic ($input) {
+  [$reply, $data] = getForecastMessageAndData($input);
+  return $reply;
+}
+
 function doLogic ($input) {
   [$reply, $data] = getForecastMessageAndData($input);
 

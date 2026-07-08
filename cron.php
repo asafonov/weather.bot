@@ -2,6 +2,7 @@
 
 require_once('config.php');
 require_once('bot.php');
+require_once('message.php');
 
 $hour = date('H', time());
 $workingDir = WORKER_CACHE_PATH . '/' . $hour;
@@ -14,7 +15,8 @@ if (file_exists($workingDir)) {
       continue;
     }
 
-    $data = json_decode("{$workingDir}/{$files[$i]}", true);
-    doCronLogic($data);
+    $data = json_decode(file_get_contents("{$workingDir}/{$files[$i]}"), true);
+    $reply = doCronLogic($data);
+    sendMessageWithRetry($reply);
   }
 }
