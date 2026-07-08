@@ -385,8 +385,9 @@ function doLogic ($input) {
 
   if (isset($data[0]['timezone'])) {
     $chatId = $input['message']['chat']['id'];
-    $scheduleUpdateTime = SCHEDULE_UPDATE_HOUR * 3600 + $data[0]['timezone'];
+    $scheduleUpdateTime = SCHEDULE_UPDATE_HOUR * 3600 - $data[0]['timezone'];
     $scheduleUpdateTime < 0 && ($scheduleUpdateTime += 24 * 3600);
+    $scheduleUpdateTime > 24 * 3600 && ($scheduleUpdateTime -= 24 * 3600);
     $scheduleUpdateHour = date('H', $scheduleUpdateTime);
     $taskDir = WORKER_CACHE_PATH . "/{$scheduleUpdateHour}";
     mkdir($taskDir);
