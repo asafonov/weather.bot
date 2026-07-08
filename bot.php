@@ -350,31 +350,48 @@ function makeSenseOfData ($data) {
   return $reply;
 }
 
-function doLogic ($data) {
-  $text = $data['message']['text'];
-  $chatId = $data['message']['chat']['id'];
+function getForecastMessageAndData ($input) {
+  $text = $input['message']['text'];
+  $chatId = $input['message']['chat']['id'];
 
   if ($text == '/start') {
-    return [
+    return [[
       'text' => START_MESSAGE,
       'chat_id' => $chatId
-    ];
+    ], null];
   }
 
   $place = preparePlace($text);
 
   if (! $place) {
-    return [
+    return [[
       'text' => PLACE_ERROR_MESSAGE,
       'chat_id' => $chatId
-    ];
+    ], null];
   }
 
   $data = weather($place);
+  $timezone = $data[0]['timezone'];
   $reply = makeSenseOfData($data);
 
-  return [
+  return [[
     'text' => $reply,
     'chat_id' => $chatId
-  ];
+  ], $data];
+}
+
+function doLogic ($input) {
+  [$reply, $data] = getForecastMessageAndData($input);
+
+  if (isset($data[0]['timezone'])) {
+    $chatId = $input['message']['chat']['id'];
+    $scheduleUpdateTime = SCHEDULE_UPDATE_HOUR * 3600 + $data[0]['timezone'];
+    $scheduleUpdateTime < 0 && ($scheduleUpdateTime += 24 * 3600);
+    $scheduleUpdateHour = date('H', $scheduleUpdateTime);
+    $taskDir = WORKER_CACHE_PATH . "/{$scheduleUpdateHour}";
+    mkdir($taskDir);
+    file_put_contents("{$taskDir}/{$chatId}");
+  }
+
+  return $reply;
 }
