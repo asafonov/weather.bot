@@ -371,7 +371,14 @@ function getForecastMessageAndData ($input) {
   }
 
   $data = weather($place);
-  $timezone = $data[0]['timezone'];
+
+  if (! isset($data[0]['timezone'])) {
+    return [[
+      'text' => PLACE_ERROR_MESSAGE,
+      'chat_id' => $chatId
+    ], $data];
+  }
+
   $reply = makeSenseOfData($data);
 
   return [[
@@ -402,9 +409,9 @@ function doLogic ($input) {
   return $reply;
 }
 
-function test() {
+function test($city) {
   $input = ['message' => [
-    'text' => 'Moscow',
+    'text' => $city,
     'chat' => ['id' => 'chat_id']
   ]];
   $reply = doLogic($input);
