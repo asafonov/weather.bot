@@ -1,4 +1,5 @@
 <?php
+require_once('config.php');
 $retry = 0;
 
 function getGeoApiUrl ($place) {
