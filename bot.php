@@ -58,12 +58,20 @@ function getDataByDays ($data) {
       $ret[$index]['rain_end'] = $time;
     }
 
+    if ($i > 1 && isset($data[$i]['rain']) && $data[$i]['rain'] > 0 && isset($ret[$index]['rain_end'])) {
+      unset($ret[$index]['rain_end']);
+    }
+
     if ($i > 0 && isset($data[$i]['snow']) && $data[$i]['snow'] > 0 && ! isset($ret[$index]['snow_start'])) {
       $ret[$index]['snow_start'] = $time;
     }
 
     if ($i > 1 && isset($data[$i - 1]['snow']) && $data[$i - 1]['snow'] > 0 && ! isset($data[$i]['snow'])) {
       $ret[$index]['snow_end'] = $time;
+    }
+
+    if ($i > 1 && isset($data[$i]['snow']) && $data[$i]['snow'] > 0 && isset($ret[$index]['snow_end'])) {
+      unset($ret[$index]['snow_end']);
     }
 
     $ret[$index]['max_temp'] = max($ret[$index]['max_temp'], $data[$i]['temp']);
