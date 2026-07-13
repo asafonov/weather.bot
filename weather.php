@@ -17,7 +17,9 @@ function getGeoDataFromCache ($cache) {
 }
 
 function getGeoData ($place) {
-  $cacheFilename = "./geo/${place}";
+  $cacheDir = WORKER_CACHE_PATH . '/geo';
+  mkdir($cacheDir);
+  $cacheFilename = "{$cacheDir}/{$place}";
 
   if (file_exists($cacheFilename)) {
     $cache = json_decode(file_get_contents($cacheFilename), true);
@@ -132,7 +134,9 @@ function geoWeather ($lat, $lon) {
 }
 
 function getCacheFile ($place) {
-  return "./cache/$place";
+  $cacheDir = WORKER_CACHE_PATH . '/cache';
+  mkdir($cacheDir);
+  return "{$cacheDir}/{$place}";
 }
 
 function loadCache ($place) {
