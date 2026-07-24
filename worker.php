@@ -2,6 +2,7 @@
 
 require_once('config.php');
 require_once('bot.php');
+require_once('message.php');
 
 if (isset($argv[1]) && file_exists(WORKER_CACHE_PATH . '/' . $argv[1])) {
   $data = file_get_contents(WORKER_CACHE_PATH . '/' . $argv[1]);

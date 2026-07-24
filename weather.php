@@ -56,7 +56,7 @@ function getHTTPStatus ($url) {
   return getHTTPStatusByHeader($headers[0]);
 }
 
-function requestApi ($type, $place, $lat = false, $lon = false) {
+function requestWeatherApi ($type, $place, $lat = false, $lon = false) {
   $url = $place ? getApiUrl($type, $place) : getApiUrlFromGeo($type, $lat, $lon);
   $data = requestWithRetry($url, true);
 
@@ -113,10 +113,10 @@ function weather ($place) {
   if ($ret !== false) return $ret;
 
   unset($ret);
-  $data = requestApi('forecast', $place);
+  $data = requestWeatherApi('forecast', $place);
 
   if ($data) {
-    $now = requestApi('weather', $place);
+    $now = requestWeatherApi('weather', $place);
     $ret = formatForecast($now, $data);
     saveCache($place, $ret);
     return $ret;
@@ -124,10 +124,10 @@ function weather ($place) {
 }
 
 function geoWeather ($lat, $lon) {
-  $data = requestApi('forecast', false, $lat, $lon);
+  $data = requestWeatherApi('forecast', false, $lat, $lon);
 
   if ($data) {
-    $now = requestApi('weather', false, $lat, $lon);
+    $now = requestWeatherApi('weather', false, $lat, $lon);
     $ret = formatForecast($now, $data);
     return $ret;
   }
