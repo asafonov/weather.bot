@@ -1,7 +1,7 @@
 <?php
 
 define('TOKEN', 'TELEGRAM_API_TOKEN');
-define('BOT_NAME', 'telegram.bot');
+define('BOT_NAME', 'weather.bot');
 define('PHP_BIN', '/usr/bin/php');
 define('WORKER_PATH', '/var/www/html/' . BOT_NAME);
 define('WORKER_CACHE_PATH', '/var/cache/' . BOT_NAME);
