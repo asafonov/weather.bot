@@ -6,7 +6,7 @@ function writeLog ($msg) {
   file_put_contents(WORKER_LOG_PATH . '/' . BOT_NAME . '.error.log', date('Y-m-d H:i:s', time()) . '   ' . "$msg\n", FILE_APPEND | LOCK_EX);
 }
 
-function requestApi ($url, $msg = false) {
+function requestApi ($url, $msg = false, $httpOptions = false) {
   $options = [
     'http' => [
       'method' => $msg === false ? 'GET' : 'POST',
@@ -20,6 +20,12 @@ function requestApi ($url, $msg = false) {
   if ($msg !== false) {
     $options['http']['header'] = "Content-type: application/x-www-form-urlencoded\r\n";
     $options['http']['content'] = http_build_query($msg);
+  }
+
+  if ($httpOptions !== false) {
+    foreach ($httpOptions as $k => $v) {
+      $options['http'][$k] = $v;
+    }
   }
 
   $context = stream_context_create($options);
@@ -40,12 +46,12 @@ function getFileWithRetry ($url) {
   }
 }
 
-function requestApiWithRetry ($url, $msg = false) {
+function requestApiWithRetry ($url, $msg = false, $httpOptions = false) {
   $try = 0;
 
   while ($try < MAX_RETRIES) {
     try {
-      $ret = requestApi($url, $msg);
+      $ret = requestApi($url, $msg,  $httpOptions);
       $ret = json_decode($ret, true);
 
       if (isset($ret['ok']) && $ret['ok']) {
@@ -71,6 +77,36 @@ function sendMessage ($msg) {
 function sendMessageWithRetry ($msg) {
   $url = 'https://api.telegram.org/bot' . TOKEN . '/sendMessage';
   return requestApiWithRetry($url, $msg);
+}
+
+function sendPhotoWithRetry ($msg) {
+  if (! file_exists($msg['photo'])) {
+    return false;
+  }
+
+  $boundary = '----' . uniqid();
+  $fileData = file_get_contents($msg['photo']);
+
+  $data = "--$boundary\r\n";
+  $data .= "Content-Disposition: form-data; name=\"chat_id\"\r\n\r\n";
+  $data .= "{$msg['chat_id']}\r\n";
+  $data .= "--$boundary\r\n";
+  $data .= "Content-Disposition: form-data; name=\"photo\"; filename=\"photo.png\"\r\n";
+  $data .= "Content-Type: image/png\r\n\r\n";
+  $data .= $fileData . "\r\n";
+  $data .= "--$boundary\r\n";
+  $data .= "Content-Disposition: form-data; name=\"caption\"\r\n\r\n";
+  $data .= "{$msg['caption']}\r\n";
+  $data .= "--$boundary--\r\n";
+
+  $httpOptions = [
+    'method' => 'POST',
+    'header' => 'Content-Type: multipart/form-data; boundary=' . $boundary . "\r\nContent-Length: " . strlen($data) . "\r\n",
+    'content' => $data
+  ];
+  $url = 'https://api.telegram.org/bot' . TOKEN . '/sendPhoto';
+
+  requestApiWithRetry($url, false, $httpOptions);
 }
 
 function isMessageWithPhoto ($msg) {
