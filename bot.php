@@ -200,6 +200,7 @@ function doLogic ($input) {
   [$reply, $data] = getForecastMessageAndData($input);
 
   if (isset($data[0]['timezone'])) {
+    $text = $input['message']['text'];
     $chatId = $input['message']['chat']['id'];
     $scheduleUpdateTime = SCHEDULE_UPDATE_HOUR * 3600 - $data[0]['timezone'];
     $scheduleUpdateTime < 0 && ($scheduleUpdateTime += 24 * 3600);
@@ -208,6 +209,10 @@ function doLogic ($input) {
     $taskDir = WORKER_CACHE_PATH . "/{$scheduleUpdateHour}";
     mkdir($taskDir);
     file_put_contents("{$taskDir}/{$chatId}", json_encode($input));
+    $dataFileName = WORKER_CACHE_PATH . "/{$chatId}";
+    $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];
+    $data[$text] = $scheduleUpdateHour;
+    file_put_contents($dataFileName, json_encode($data));
   }
 
   return $reply;
