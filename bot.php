@@ -191,6 +191,16 @@ function getForecastMessageAndData ($input) {
   ], $data];
 }
 
+function capitalizeCity ($city) {
+  preg_match_all('/[A-z]+/', $city, $matches);
+
+  for ($i = 0, $j = count($matches[0]); $i < $j; ++$i) {
+    $city = str_replace($matches[0][$i], ucfirst(strtolower($matches[0][$i])), $city);
+  }
+
+  return $city;
+}
+
 function doCronLogic ($input) {
   [$reply, $data] = getForecastMessageAndData($input);
   return $reply;
@@ -200,7 +210,7 @@ function doLogic ($input) {
   [$reply, $data] = getForecastMessageAndData($input);
 
   if (isset($data[0]['timezone'])) {
-    $text = $input['message']['text'];
+    $city = capitalizeCity($input['message']['text']);
     $chatId = $input['message']['chat']['id'];
     $scheduleUpdateTime = SCHEDULE_UPDATE_HOUR * 3600 - $data[0]['timezone'];
     $scheduleUpdateTime < 0 && ($scheduleUpdateTime += 24 * 3600);
