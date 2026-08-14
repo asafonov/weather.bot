@@ -221,7 +221,7 @@ function doLogic ($input) {
     file_put_contents("{$taskDir}/{$chatId}", json_encode($input));
     $dataFileName = WORKER_CACHE_PATH . "/{$chatId}";
     $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];
-    $data[$text] = $scheduleUpdateHour;
+    $data[$city] = $scheduleUpdateHour;
     file_put_contents($dataFileName, json_encode($data));
   }
 
