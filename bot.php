@@ -176,9 +176,7 @@ function getListKeyboardMarkup ($chatId) {
   return json_encode(['inline_keyboard' => $keyboard]);
 }
 
-function getForecastMessageAndData ($input) {
-  $text = $input['message']['text'];
-  $chatId = $input['message']['chat']['id'];
+function getForecastMessageAndData ($text, $chatId) {
   $place = preparePlace($text);
 
   if (! $place) {
@@ -216,7 +214,10 @@ function capitalizeCity ($city) {
 }
 
 function doCronLogic ($input) {
-  [$reply, $data] = getForecastMessageAndData($input);
+  $text = $input['message']['text'];
+  $chatId = $input['message']['chat']['id'];
+
+  [$reply, $data] = getForecastMessageAndData($text, $chatId);
   return $reply;
 }
 
@@ -247,12 +248,12 @@ function doLogic ($input) {
     $lastCommand = getLastCommand($query['chat_id']);
 
     if ($lastCommand === '/list') {
-      [$reply, $data] = getForecastMessageAndData($input);
+      [$reply, $data] = getForecastMessageAndData($query['data'], $query['chat_id']);
       return $reply;
     }
   }
 
-  [$reply, $data] = getForecastMessageAndData($input);
+  [$reply, $data] = getForecastMessageAndData($text, $chatId);
 
   if (isset($data[0]['timezone'])) {
     $city = capitalizeCity($input['message']['text']);
@@ -262,7 +263,7 @@ function doLogic ($input) {
     $scheduleUpdateTime > 24 * 3600 && ($scheduleUpdateTime -= 24 * 3600);
     $scheduleUpdateHour = date('H', $scheduleUpdateTime);
     $taskDir = WORKER_CACHE_PATH . "/{$scheduleUpdateHour}";
-    mkdir($taskDir);
+    ! file_exists($taskDir) && mkdir($taskDir);
     file_put_contents("{$taskDir}/{$chatId}", json_encode($input));
     $dataFileName = getDataFileName($chatId);
     $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];

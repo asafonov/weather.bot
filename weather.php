@@ -18,7 +18,7 @@ function getGeoDataFromCache ($cache) {
 
 function getGeoData ($place) {
   $cacheDir = WORKER_CACHE_PATH . '/geo';
-  mkdir($cacheDir);
+  ! file_exists($cacheDir) && mkdir($cacheDir);
   $cacheFilename = "{$cacheDir}/{$place}";
 
   if (file_exists($cacheFilename)) {
@@ -135,7 +135,7 @@ function geoWeather ($lat, $lon) {
 
 function getCacheFile ($place) {
   $cacheDir = WORKER_CACHE_PATH . '/cache';
-  mkdir($cacheDir);
+  ! file_exists($cacheDir) && mkdir($cacheDir);
   return "{$cacheDir}/{$place}";
 }
 
