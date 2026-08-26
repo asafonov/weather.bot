@@ -232,12 +232,16 @@ function doLogic ($input) {
     ];
   }
 
-  if ($text == '/list') {
+  if ($text === '/list' || $text === '/delete') {
     saveLastCommand($text, $chatId);
     $reply_markup = getListKeyboardMarkup($chatId);
+    $texts = [
+      '/list' => 'Here is the list of places you are following:',
+      '/delete' => 'Please select the place for unsubscribing:'
+    ];
 
     return $reply_markup !== false ? [
-      'text' => 'Here is the list of places you are following:',
+      'text' => $texts[$text],
       'chat_id' => $chatId,
       'reply_markup' => $reply_markup
     ] : [
@@ -253,6 +257,23 @@ function doLogic ($input) {
     if ($lastCommand === '/list') {
       [$reply, $data] = getForecastMessageAndData($query['data'], $query['chat_id']);
       return $reply;
+    }
+
+    if ($lastCommand === '/delete') {
+      $chatId = $query['chat_id'];
+      $city = $query['data'];
+      $dataFileName = getDataFileName($chatId);
+      $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];
+      $scheduleUpdateHour = $data[$city];
+      unset($data[$city]);
+      file_put_contents($dataFileName, json_encode($data));
+      $taskFilename = WORKER_CACHE_PATH . "/{$scheduleUpdateHour}/{$chatId}_{$city}";
+      unlink($taskFilename);
+
+      return [
+        'text' => "You unsubscribed from the weather updates from {$city}",
+        'chat_id' => $chatId
+      ];
     }
   }
 
