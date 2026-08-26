@@ -169,22 +169,6 @@ function getListKeyboardMarkup ($chatId) {
 function getForecastMessageAndData ($input) {
   $text = $input['message']['text'];
   $chatId = $input['message']['chat']['id'];
-
-  if ($text == '/start') {
-    return [[
-      'text' => START_MESSAGE,
-      'chat_id' => $chatId
-    ], null];
-  }
-
-  if ($text == '/list') {
-    return [[
-      'text' => 'Here is the list of places you are following:  ',
-      'chat_id' => $chatId,
-      'reply_markup' => getListKeyboardMarkup($chatId)
-    ], null];
-  }
-
   $place = preparePlace($text);
 
   if (! $place) {
@@ -227,6 +211,35 @@ function doCronLogic ($input) {
 }
 
 function doLogic ($input) {
+  $text = $input['message']['text'];
+  $chatId = $input['message']['chat']['id'];
+
+  if ($text == '/start') {
+    return [[
+      'text' => START_MESSAGE,
+      'chat_id' => $chatId
+    ], null];
+  }
+
+  if ($text == '/list') {
+    saveLastCommand($text, $chatId);
+    return [[
+      'text' => 'Here is the list of places you are following:  ',
+      'chat_id' => $chatId,
+      'reply_markup' => getListKeyboardMarkup($chatId)
+    ], null];
+  }
+
+  if (isCallbackQuery($input)) {
+    $query = getCallbackQueryData($input);
+    $lastCommand = getLastCommand($query['chat_id']);
+
+    if ($lastCommand === '/list') {
+      [$reply, $data] = getForecastMessageAndData($input);
+      return $reply;
+    }
+  }
+
   [$reply, $data] = getForecastMessageAndData($input);
 
   if (isset($data[0]['timezone'])) {
