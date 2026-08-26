@@ -267,7 +267,7 @@ function doLogic ($input) {
     $scheduleUpdateHour = date('H', $scheduleUpdateTime);
     $taskDir = WORKER_CACHE_PATH . "/{$scheduleUpdateHour}";
     ! file_exists($taskDir) && mkdir($taskDir);
-    file_put_contents("{$taskDir}/{$chatId}", json_encode($input));
+    file_put_contents("{$taskDir}/{$chatId}_{$city}", json_encode($input));
     $dataFileName = getDataFileName($chatId);
     $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];
     $data[$city] = $scheduleUpdateHour;
