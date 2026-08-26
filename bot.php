@@ -225,19 +225,21 @@ function doLogic ($input) {
   $chatId = $input['message']['chat']['id'];
 
   if ($text == '/start') {
-    return [[
+    return [
       'text' => START_MESSAGE,
       'chat_id' => $chatId
-    ], null];
+    ];
   }
 
   if ($text == '/list') {
     saveLastCommand($text, $chatId);
-    return [[
+    $reply_markup = getListKeyboardMarkup($chatId);
+
+    return [
       'text' => 'Here is the list of places you are following:  ',
       'chat_id' => $chatId,
-      'reply_markup' => getListKeyboardMarkup($chatId)
-    ], null];
+      'reply_markup' => $reply_markup
+    ];
   }
 
   if (isCallbackQuery($input)) {
