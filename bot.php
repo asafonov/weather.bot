@@ -173,7 +173,7 @@ function getListKeyboardMarkup ($chatId) {
     $keyboard[] = [['text' => $k, 'callback_data' => $k]];
   }
 
-  return json_encode(['inline_keyboard' => $keyboard]);
+  return count($keyboard) > 0 ? json_encode(['inline_keyboard' => $keyboard]) : false;
 }
 
 function getForecastMessageAndData ($text, $chatId) {
@@ -236,7 +236,7 @@ function doLogic ($input) {
     saveLastCommand($text, $chatId);
     $reply_markup = getListKeyboardMarkup($chatId);
 
-    return count($reply_markup) > 0 ? [
+    return $reply_markup !== false ? [
       'text' => 'Here is the list of places you are following:',
       'chat_id' => $chatId,
       'reply_markup' => $reply_markup
