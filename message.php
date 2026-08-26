@@ -6,6 +6,14 @@ function writeLog ($msg) {
   file_put_contents(WORKER_LOG_PATH . '/' . BOT_NAME . '.error.log', date('Y-m-d H:i:s', time()) . '   ' . "$msg\n", FILE_APPEND | LOCK_EX);
 }
 
+function saveLastCommand ($command, $chatId) {
+  file_put_contents(WORKER_CACHE_PATH . '/' . $chatId . '/last_command', $command);
+}
+
+function getLastCommand ($chatId) {
+  return file_get_contents(WORKER_CACHE_PATH . '/' . $chatId . '/last_command');
+}
+
 function requestApi ($url, $msg = false, $httpOptions = false) {
   $options = [
     'http' => [

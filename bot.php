@@ -154,6 +154,18 @@ function makeSenseOfData ($data) {
   return $reply;
 }
 
+function getListKeyboardMarkup ($chatId) {
+  $dataFileName = WORKER_CACHE_PATH . "/{$chatId}";
+  $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];
+  $keyboard = [];
+
+  foreach ($data as $k => $v) {
+    $keyboard[] = [['text' => $k, 'callback_data' => $k]];
+  }
+
+  return json_encode(['inline_keyboard' => $keyboard]);
+}
+
 function getForecastMessageAndData ($input) {
   $text = $input['message']['text'];
   $chatId = $input['message']['chat']['id'];
@@ -162,6 +174,14 @@ function getForecastMessageAndData ($input) {
     return [[
       'text' => START_MESSAGE,
       'chat_id' => $chatId
+    ], null];
+  }
+
+  if ($text == '/list') {
+    return [[
+      'text' => 'Here is the list of places you are following:  ',
+      'chat_id' => $chatId,
+      'reply_markup' => getListKeyboardMarkup($chatId)
     ], null];
   }
 
