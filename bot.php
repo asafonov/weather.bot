@@ -236,10 +236,13 @@ function doLogic ($input) {
     saveLastCommand($text, $chatId);
     $reply_markup = getListKeyboardMarkup($chatId);
 
-    return [
-      'text' => 'Here is the list of places you are following:  ',
+    return count($reply_markup) > 0 ? [
+      'text' => 'Here is the list of places you are following:',
       'chat_id' => $chatId,
       'reply_markup' => $reply_markup
+    ] : [
+      'text' => 'You are not subscribed to a weather in any city',
+      'chat_id' => $chatId
     ];
   }
 
