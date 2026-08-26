@@ -154,8 +154,18 @@ function makeSenseOfData ($data) {
   return $reply;
 }
 
+function getDataFileName ($chatId) {
+  $dataDirName = WORKER_CACHE_PATH . "/{$chatId}";
+
+  if (! file_exists($dataDirName)) {
+    mkdir($dataDirName);
+  }
+
+  return "$dataDirName/data";
+}
+
 function getListKeyboardMarkup ($chatId) {
-  $dataFileName = WORKER_CACHE_PATH . "/{$chatId}";
+  $dataFileName = getDataFileName($chatId);
   $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];
   $keyboard = [];
 
@@ -252,7 +262,7 @@ function doLogic ($input) {
     $taskDir = WORKER_CACHE_PATH . "/{$scheduleUpdateHour}";
     mkdir($taskDir);
     file_put_contents("{$taskDir}/{$chatId}", json_encode($input));
-    $dataFileName = WORKER_CACHE_PATH . "/{$chatId}";
+    $dataFileName = getDataFileName($chatId);
     $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];
     $data[$city] = $scheduleUpdateHour;
     file_put_contents($dataFileName, json_encode($data));
