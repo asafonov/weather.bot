@@ -121,6 +121,16 @@ function getWindSpeedDescription ($wind_speed) {
   }
 }
 
+function getWeatherEmoji ($now) {
+  if (isset($now['rain']) && $now['rain'] >= 1) return emoji('1F327');
+  if (isset($now['rain']) && $now['rain'] < 1) return emoji('1F326');
+  if (isset($now['snow']) && $now['snow'] >= 0) return emoji('1F328');
+  if ($now['wind_speed'] > 8) return emoji('1F32C');
+  if ($now['clouds'] < 25) return emoji('2600');
+  if ($now['clouds'] < 75) return emoji('26C5');
+  return emoji('2601');
+}
+
 function makeSenseOfData ($data) {
   $data = getDataByDays($data);
   $words = [
@@ -145,7 +155,9 @@ function makeSenseOfData ($data) {
     ]
   ];
 
-  $reply = "The current weather in {$data['now']['place']} is characterised by {$data['now']['description']}. The air temperature stands at {$data['now']['temp']}°C{$words['now']['feels_like']}. The wind blows as a {$words['now']['wind_description']} coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts reaching up to {$data['now']['gust']} m/s. Atmospheric pressure is recorded at {$data['now']['pressure']} mm Hg.";
+  $emoji = getWeatherEmoji($data['now']);
+  $reply = "{$emoji} <b>{$data['now']['place']}</b>";
+  $reply .= "\n\nThe current weather in {$data['now']['place']} is characterised by {$data['now']['description']}. The air temperature stands at {$data['now']['temp']}°C{$words['now']['feels_like']}. The wind blows as a {$words['now']['wind_description']} coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts reaching up to {$data['now']['gust']} m/s. Atmospheric pressure is recorded at {$data['now']['pressure']} mm Hg.";
 
   $reply .= "\n\nLater today, {$words['today']['temp']}. You will notice {$data['today']['description'][0]}{$words['today']['description_add']} and a {$words['today']['wind_description']} from the {$data['today']['wind_direction'][0]} with a speed of {$data['today']['wind']} m/s; brief gusts may reach {$data['today']['gust']} m/s. {$words['today']['rain']}{$words['today']['snow']}The pressure will remain around {$words['today']['pressure']} mm Hg.";
 
@@ -199,7 +211,8 @@ function getForecastMessageAndData ($text, $chatId) {
 
   return [[
     'text' => $reply,
-    'chat_id' => $chatId
+    'chat_id' => $chatId,
+    'parse_mode' => 'HTML'
   ], $data];
 }
 
