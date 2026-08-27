@@ -14,6 +14,10 @@ function getLastCommand ($chatId) {
   return file_get_contents(WORKER_CACHE_PATH . '/' . $chatId . '/last_command');
 }
 
+function emoji ($code) {
+  return mb_convert_encoding('&#x' . $code . ';', 'UTF-8', 'HTML-ENTITIES');
+}
+
 function requestApi ($url, $msg = false, $httpOptions = false) {
   $options = [
     'http' => [
