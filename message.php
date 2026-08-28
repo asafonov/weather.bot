@@ -91,6 +91,11 @@ function sendMessageWithRetry ($msg) {
   return requestApiWithRetry($url, $msg);
 }
 
+function sendRichMessageWithRetry ($msg) {
+  $url = 'https://api.telegram.org/bot' . TOKEN . '/sendRichMessage';
+  return requestApiWithRetry($url, $msg);
+}
+
 function sendPhotoWithRetry ($msg) {
   if (! file_exists($msg['photo'])) {
     return false;
