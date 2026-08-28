@@ -54,5 +54,5 @@ if (isset($_GET['place'])) {
   $dataFileName = WORKER_CACHE_PATH . "/{$chatId}/data";
   $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];
   headers();
-  die(array_keys($data));
+  die(array_keys(json_encode($data)));
 }
