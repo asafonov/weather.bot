@@ -48,4 +48,11 @@ if (isset($_GET['place'])) {
   $lon = floatval($_GET['lon']);
   headers();
   die(json_encode(geoWeather($lat, $lon)));
+} else if (isset($_GET['user_id'])) {
+  require_once('config.php');
+  $chatId = intval($_GET['user_id']);
+  $dataFileName = WORKER_CACHE_PATH . "/{$chatId}/data";
+  $data = file_exists($dataFileName) ? json_decode(file_get_contents($dataFileName), true) : [];
+  headers();
+  die(array_keys($data));
 }
