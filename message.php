@@ -30,8 +30,8 @@ function requestApi ($url, $msg = false, $httpOptions = false) {
   ];
 
   if ($msg !== false) {
-    $options['http']['header'] = "Content-type: application/x-www-form-urlencoded\r\n";
-    $options['http']['content'] = http_build_query($msg);
+    $options['http']['header'] = "Content-type: application/json\r\n";
+    $options['http']['content'] = json_encode($msg);
   }
 
   if ($httpOptions !== false) {

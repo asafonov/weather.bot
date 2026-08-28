@@ -213,7 +213,7 @@ function getForecastMessageAndData ($text, $chatId) {
   $reply = makeSenseOfData($data);
 
   return [[
-    'message' => ['blocks' => $reply],
+    'rich_message' => ['blocks' => $reply],
     'chat_id' => $chatId
   ], $data];
 }

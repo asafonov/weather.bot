@@ -11,7 +11,7 @@ if (isset($argv[1]) && file_exists(WORKER_CACHE_PATH . '/' . $argv[1])) {
 
   if (isset($reply['photo']))
     sendPhotoWithRetry($reply);
-  else if (isset[$reply]['message'])
+  else if (isset($reply['rich_message']))
     sendRichMessageWithRetry($reply);
   else if (isset($reply['text']))
     sendMessageWithRetry($reply);

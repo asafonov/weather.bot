@@ -1,12 +1,12 @@
 <?php
 
 class RichText {
-  $blocks = [];
+  private $blocks = [];
 
   function header ($level, $text) {
     $this->blocks[] = [
-      'type' => 'section_heading',
-      'level' => $level,
+      'type' => 'heading',
+      'size' => $level,
       'text' => $text
     ];
 
