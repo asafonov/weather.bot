@@ -2,6 +2,7 @@
 
 require_once('config.php');
 require_once('weather.php');
+require_once('richtext.php');
 
 function preparePlace ($place) {
   $place = strtolower(preg_replace('/[^A-z ]/', '', $place));
