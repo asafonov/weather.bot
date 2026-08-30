@@ -17,6 +17,12 @@ if (file_exists($workingDir)) {
 
     $data = json_decode(file_get_contents("{$workingDir}/{$files[$i]}"), true);
     $reply = doCronLogic($data);
-    sendMessageWithRetry($reply);
+
+    if (isset($reply['photo']))
+      sendPhotoWithRetry($reply);
+    else if (isset($reply['rich_message']))
+      sendRichMessageWithRetry($reply);
+    else if (isset($reply['text']))
+      sendMessageWithRetry($reply);
   }
 }
