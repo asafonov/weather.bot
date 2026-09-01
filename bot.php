@@ -160,6 +160,8 @@ function makeSenseOfData ($data) {
   $richText = new RichText();
 
   $richText->h1("{$data['now']['place']}, {$emoji} {$data['now']['temp']}°C");
+  $richText->p("Wind: {$data['now']['wind_speed']}m/s {$data['now']['wind_direction']}, gusts: {$data['now']['gust']} m/s");
+  $richText->p(emoji('1F321') . ": {$data['now']['pressure']} mm Hg");
   $richText->p("The current weather in {$data['now']['place']} is characterised by {$data['now']['description']}. The air temperature stands at {$data['now']['temp']}°C{$words['now']['feels_like']}. The wind blows as a {$words['now']['wind_description']} coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts reaching up to {$data['now']['gust']} m/s. Atmospheric pressure is recorded at {$data['now']['pressure']} mm Hg.");
 
   $richText->p("Later today, {$words['today']['temp']}. You will notice {$data['today']['description'][0]}{$words['today']['description_add']} and a {$words['today']['wind_description']} from the {$data['today']['wind_direction'][0]} with a speed of {$data['today']['wind']} m/s; brief gusts may reach {$data['today']['gust']} m/s. {$words['today']['rain']}{$words['today']['snow']}The pressure will remain around {$words['today']['pressure']} mm Hg.");
