@@ -171,21 +171,21 @@ function formatTemp ($temp) {
 
 function getWindDirection ($deg) {
   if ($deg > 337.5 || $deg <= 22.5) {
-    return 'north';
+    return 'N';
   } else if ($deg > 22.5 && $deg <= 67.5) {
-    return 'northeast';
+    return 'NE';
   } else if ($deg > 67.5 && $deg <= 112.5) {
-    return 'east';
+    return 'E';
   } else if ($deg > 112.5 && $deg <= 157.5) {
-    return 'southeast';
+    return 'SE';
   } else if ($deg > 157.5 && $deg <= 202.5) {
-    return 'south';
+    return 'S';
   } else if ($deg > 202.5 && $deg <= 247.5) {
-    return 'southwest';
+    return 'SE';
   } else if ($deg > 247.5 && $deg <= 292.5) {
-    return 'west';
+    return 'W';
   } else {
-    return 'northwest';
+    return 'NW';
   }
 }
 

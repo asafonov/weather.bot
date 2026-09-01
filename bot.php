@@ -39,7 +39,7 @@ function getDataByDays ($data) {
       $dayNum = 1;
       $ret[$index]['max_temp'] = -255;
       $ret[$index]['min_temp'] = 255;
-      $ret[$index]['wind'] = 0;
+      $ret[$index]['wind_speed'] = 0;
       $ret[$index]['gust'] = 0;
       $ret[$index]['max_rain'] = 0;
       $ret[$index]['total_rain'] = 0;
@@ -77,7 +77,7 @@ function getDataByDays ($data) {
 
     $ret[$index]['max_temp'] = max($ret[$index]['max_temp'], $data[$i]['temp']);
     $ret[$index]['min_temp'] = min($ret[$index]['min_temp'], $data[$i]['temp']);
-    $ret[$index]['wind'] = max($ret[$index]['wind'], $data[$i]['wind_speed']);
+    $ret[$index]['wind_speed'] = max($ret[$index]['wind_speed'], $data[$i]['wind_speed']);
     $ret[$index]['gust'] = max($ret[$index]['gust'], $data[$i]['gust']);
     $ret[$index]['max_rain'] = max($ret[$index]['max_rain'], isset($data[$i]['rain']) ? $data[$i]['rain'] : 0);
     $ret[$index]['total_rain'] += isset($data[$i]['rain']) ? $data[$i]['rain'] : 0;
@@ -122,14 +122,37 @@ function getWindSpeedDescription ($wind_speed) {
   }
 }
 
+function getEmojiByName ($name) {
+  if ($name === 'rain') return emoji('1F327');
+  if ($name === 'light_rain') return emoji('1F326');
+  if ($name === 'snow') return emoji('1F328');
+  if ($name === 'wind') return emoji('1F32C');
+  if ($name === 'sun') return emoji('2600');
+  if ($name === 'sun_clouds') return emoji('26C5');
+  if ($name === 'clouds') return emoji('2601');
+  if ($name === 'thermo') return emoji('1F321');
+}
+
 function getWeatherEmoji ($now) {
-  if (isset($now['rain']) && $now['rain'] >= 1) return emoji('1F327');
-  if (isset($now['rain']) && $now['rain'] < 1) return emoji('1F326');
-  if (isset($now['snow']) && $now['snow'] >= 0) return emoji('1F328');
-  if ($now['wind_speed'] > 8) return emoji('1F32C');
-  if ($now['clouds'] < 25) return emoji('2600');
-  if ($now['clouds'] < 75) return emoji('26C5');
-  return emoji('2601');
+  if (isset($now['rain']) && $now['rain'] >= 1) return getEmojiByName('rain');
+  if (isset($now['max_rain']) && $now['max_rain'] > 2) return getEmojiByName('rain');
+  if (isset($now['max_rain']) && $now['total_rain'] > $now['max_rain'] && $now['max_rain'] >= 1) return getEmojiByName('rain');
+  if (isset($now['max_rain']) && $now['total_rain'] > $now['max_rain'] && $now['max_rain'] < 1) return getEmojiByName('light_rain');
+  if (isset($now['rain']) && $now['rain'] < 1) return getEmojiByName('light_rain');
+  if (isset($now['snow']) && $now['snow'] >= 0) return getEmojiByName('snow');
+  if (isset($now['max_snow']) && $now['max_snow'] > 2) return getEmojiByName('snow');
+  if (isset($now['max_snow']) && $now['total_snow'] > $now['max_snow']) return getEmojiByName('snow');
+  if (isset($now['wind_speed']) && $now['wind_speed'] > 8) return getEmojiByName('wind');
+
+  if (isset($now['numDays'])) {
+    if ($now['clouds']/$now['numDays'] < 25) return getEmojiByName('sun');
+    if ($now['clouds']/$now['numDays'] < 75) return getEmojiByName('sun_clouds');
+  } else {
+    if ($now['clouds'] < 25) return getEmojiByName('sun');
+    if ($now['clouds'] < 75) return getEmojiByName('sun_clouds');
+  }
+
+  return getEmojiByName('clouds');
 }
 
 function makeSenseOfData ($data) {
@@ -145,7 +168,7 @@ function makeSenseOfData ($data) {
       'pressure' => intval($data['today']['pressure'] / $data['today']['numDays']),
       'rain' => isset($data['today']['rain_start']) ? "Rainfall is forecast between {$data['today']['rain_start']} " . (isset($data['today']['rain_end']) ? "and {$data['today']['rain_end']}" : 'and the end of the day') . '. ' : '',
       'snow' => isset($data['today']['snow_start']) ? "Snowfall is forecast between {$data['today']['snow_start']} " . (isset($data['today']['snow_end']) ? "and {$data['today']['snow_end']}" : 'and the end of the day') . '. ' : '',
-      'temp' => $data['today']['min_temp'] < $data['today']['max_temp'] ? "temperatures are expected to fluctuate between {$data['today']['min_temp']}°C and {$data['today']['max_temp']}°C" : "temperature will remain at {$data['today']['min_temp']}°C"
+      'temp' => $data['today']['min_temp'] < $data['today']['max_temp'] ? "{$data['today']['min_temp']}°C - {$data['today']['max_temp']}°C" : "{$data['today']['min_temp']}°C"
     ],
     'tomorrow' => [
       'wind_description' => getWindSpeedDescription($data['tomorrow']['wind']),
@@ -157,12 +180,13 @@ function makeSenseOfData ($data) {
   ];
 
   $emoji = getWeatherEmoji($data['now']);
+  $laterEmoji = getWeatherEmoji($data['today']);
   $richText = new RichText();
 
   $richText->h1("{$data['now']['place']}, {$emoji} {$data['now']['temp']}°C");
-  $richText->p("Wind: {$data['now']['wind_speed']}m/s {$data['now']['wind_direction']}, gusts: {$data['now']['gust']} m/s");
+  $richText->p(emoji('1F32C') . ": {$data['now']['wind_speed']}m/s, {$data['now']['wind_direction']}" . (isset($data['now']['gust']) && $data['now']['gust'] > 0 ? ", gusts: {$data['now']['gust']} m/s" : ''));
   $richText->p(emoji('1F321') . ": {$data['now']['pressure']} mm Hg");
-  $richText->p("The current weather in {$data['now']['place']} is characterised by {$data['now']['description']}. The air temperature stands at {$data['now']['temp']}°C{$words['now']['feels_like']}. The wind blows as a {$words['now']['wind_description']} coming from the {$data['now']['wind_direction']} at {$data['now']['wind_speed']} m/s with occasional gusts reaching up to {$data['now']['gust']} m/s. Atmospheric pressure is recorded at {$data['now']['pressure']} mm Hg.");
+  $richText->h1("Later today: {$laterEmoji} {$words['today']['temp']}");
 
   $richText->p("Later today, {$words['today']['temp']}. You will notice {$data['today']['description'][0]}{$words['today']['description_add']} and a {$words['today']['wind_description']} from the {$data['today']['wind_direction'][0]} with a speed of {$data['today']['wind']} m/s; brief gusts may reach {$data['today']['gust']} m/s. {$words['today']['rain']}{$words['today']['snow']}The pressure will remain around {$words['today']['pressure']} mm Hg.");
 
