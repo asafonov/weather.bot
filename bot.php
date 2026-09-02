@@ -28,6 +28,10 @@ function getDataByDays ($data) {
         $ret[$index]['wind_direction'] = array_reverse(array_keys($ret[$index]['wind_direction']));
         asort($ret[$index]['description'], SORT_NUMERIC);
         $ret[$index]['description'] = array_reverse(array_keys($ret[$index]['description']));
+        $ret[$index]['max_rain'] = intval($ret[$index]['max_rain'] * 100) / 100;
+        $ret[$index]['max_snow'] = intval($ret[$index]['max_snow'] * 100) / 100;
+        $ret[$index]['total_rain'] = intval($ret[$index]['total_rain'] * 100) / 100;
+        $ret[$index]['total_snow'] = intval($ret[$index]['total_snow'] * 100) / 100;
       }
 
       $index = $date === $today ? 'today' : 'tomorrow';
