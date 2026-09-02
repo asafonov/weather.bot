@@ -158,34 +158,29 @@ function getWeatherEmoji ($now) {
 function makeSenseOfData ($data) {
   $data = getDataByDays($data);
   $words = [
-    'now' => [
-      'wind_description' => getWindSpeedDescription($data['now']['wind_speed']),
-      'feels_like' => abs($data['now']['temp'] - $data['now']['feels_like']) > 1 ? ", while the perceived temperature is {$data['now']['feels_like']}°C due to the {$data['now']['humidity']}% humidity" : ''
-    ],
     'today' => [
-      'wind_description' => getWindSpeedDescription($data['today']['wind']),
-      'description_add' => count($data['today']['description']) > 1 ? ' accompanied by ' . $data['today']['description'][1] : '',
       'pressure' => intval($data['today']['pressure'] / $data['today']['numDays']),
       'rain' => isset($data['today']['rain_start']) ? "{$data['today']['rain_start']} - " . (isset($data['today']['rain_end']) ? "{$data['today']['rain_end']}" : '24:00') : '',
       'snow' => isset($data['today']['snow_start']) ? "{$data['today']['snow_start']} - " . (isset($data['today']['snow_end']) ? "{$data['today']['snow_end']}" : '24:00') : '',
       'temp' => $data['today']['min_temp'] < $data['today']['max_temp'] ? "{$data['today']['min_temp']}°C - {$data['today']['max_temp']}°C" : "{$data['today']['min_temp']}°C"
     ],
     'tomorrow' => [
-      'wind_description' => getWindSpeedDescription($data['tomorrow']['wind']),
-      'description_add' => count($data['tomorrow']['description']) > 1 ? ' with ' . $data['tomorrow']['description'][1] : '',
       'pressure' => intval($data['tomorrow']['pressure'] / $data['tomorrow']['numDays']),
-      'rain' => isset($data['tomorrow']['rain_start']) ? "Precipitation is predicted to start at {$data['tomorrow']['rain_start']} and last until " . (isset($data['tomorrow']['rain_end']) ? "{$data['tomorrow']['rain_end']}" : 'the end of the day')  . '. ' : '',
-      'snow' => isset($data['tomorrow']['snow_start']) ? "Snow is from {$data['tomorrow']['snow_start']} " . (isset($data['tomorrow']['snow_end']) ? "until {$data['tomorrow']['snow_end']}" : 'until the end of the day') . '. ' : ''
+      'rain' => isset($data['tomorrow']['rain_start']) ? "{$data['tomorrow']['rain_start']} - " . (isset($data['tomorrow']['rain_end']) ? "{$data['tomorrow']['rain_end']}" : '24:00') : '',
+      'snow' => isset($data['tomorrow']['snow_start']) ? "{$data['tomorrow']['snow_start']} - " . (isset($data['tomorrow']['snow_end']) ? "{$data['tomorrow']['snow_end']}" : '24:00') : '',
+      'temp' => $data['tomorrow']['min_temp'] < $data['tomorrow']['max_temp'] ? "{$data['tomorrow']['min_temp']}°C - {$data['tomorrow']['max_temp']}°C" : "{$data['tomorrow']['min_temp']}°C"
     ]
   ];
 
   $emoji = getWeatherEmoji($data['now']);
   $laterEmoji = getWeatherEmoji($data['today']);
+  $tomorrowEmoji = getWeatherEmoji($data['tomorrow']);
   $richText = new RichText();
 
   $richText->h1("{$data['now']['place']}, {$emoji} {$data['now']['temp']}°C");
   $richText->p(emoji('1F32C') . ": {$data['now']['wind_speed']}m/s, {$data['now']['wind_direction']}" . (isset($data['now']['gust']) && $data['now']['gust'] > 0 ? ", gusts: {$data['now']['gust']} m/s" : ''));
   $richText->p(emoji('1F321') . ": {$data['now']['pressure']} mm Hg");
+
   $richText->h1("Later today: {$laterEmoji} {$words['today']['temp']}");
 
   if ($data['today']['total_rain']) {
@@ -197,9 +192,20 @@ function makeSenseOfData ($data) {
   }
 
   $richText->p(emoji('1F32C') . ": {$data['today']['wind_speed']}m/s, {$data['today']['wind_direction'][0]}" . (isset($data['today']['gust']) && $data['today']['gust'] > 0 ? ", gusts: {$data['today']['gust']} m/s" : ''));
-  $richText->p(emoji('1F321') . ": {$data['today']['pressure']} mm Hg");
+  $richText->p(emoji('1F321') . ": {$words['today']['pressure']} mm Hg");
 
-  $richText->p("Tomorrow, overnight temperatures are projected to drop to around {$data['tomorrow']['min_temp']}°C, rising to a maximum of {$data['tomorrow']['max_temp']}°C during the day. The sky will feature {$data['tomorrow']['description'][0]}{$words['tomorrow']['description_add']}. {$words['tomorrow']['rain']}{$words['tomorrow']['snow']}The wind will be a {$words['tomorrow']['wind_description']} from the {$data['tomorrow']['wind_direction'][0]}, with speeds up to {$data['tomorrow']['wind']} m/s and gusts potentially reaching up to {$data['tomorrow']['gust']} m/s. Atmospheric pressure is anticipated to be approximately {$words['tomorrow']['pressure']} mm Hg.");
+  $richText->h1("Tomorrow: {$tomorrowEmoji} {$words['tomorrow']['temp']}");
+
+  if ($data['tomorrow']['total_rain']) {
+    $richText->p(getEmojiByName('rain') . ": {$words['tomorrow']['rain']}, {$data['tomorrow']['total_rain']}mm, max: {$data['tomorrow']['max_rain']}mm/h");
+  }
+
+  if ($data['tomorrow']['total_snow']) {
+    $richText->p(getEmojiByName('snow') . ": {$words['tomorrow']['snow']}, {$data['tomorrow']['total_snow']}mm, max: {$data['tomorrow']['max_snow']}mm/h");
+  }
+
+  $richText->p(emoji('1F32C') . ": {$data['tomorrow']['wind_speed']}m/s, {$data['tomorrow']['wind_direction'][0]}" . (isset($data['tomorrow']['gust']) && $data['tomorrow']['gust'] > 0 ? ", gusts: {$data['tomorrow']['gust']} m/s" : ''));
+  $richText->p(emoji('1F321') . ": {$words['tomorrow']['pressure']} mm Hg");
 
   return $richText->get();
 }
