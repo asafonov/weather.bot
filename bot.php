@@ -236,17 +236,30 @@ function getListKeyboardMarkup ($chatId) {
   return count($keyboard) > 0 ? json_encode(['inline_keyboard' => $keyboard]) : false;
 }
 
-function getForecastMessageAndData ($text, $chatId) {
-  $place = preparePlace($text);
-
-  if (! $place) {
+function getForecastMessageAndData ($text, $chatId, $location = false) {
+  if (! $place && ! $location) {
     return [[
       'text' => PLACE_ERROR_MESSAGE,
       'chat_id' => $chatId
     ], null];
   }
 
-  $data = weather($place);
+  $data = null;
+
+  if ($place) {
+    $place = preparePlace($text);
+
+    if (! $place) {
+      return [[
+        'text' => PLACE_ERROR_MESSAGE,
+        'chat_id' => $chatId
+      ], null];
+    }
+
+    $data = weather($place);
+  } else if ($location) {
+    $data = geoWeather($location['latitude'], $location['longitude']);
+  }
 
   if (! isset($data[0]['timezone'])) {
     return [[
@@ -337,10 +350,12 @@ function doLogic ($input) {
     }
   }
 
-  [$reply, $data] = getForecastMessageAndData($text, $chatId);
+  $location = getLocation($input);
+
+  [$reply, $data] = getForecastMessageAndData($text, $chatId, $location);
 
   if (isset($data[0]['timezone'])) {
-    $city = capitalizeCity($input['message']['text']);
+    $city = $data[0]['place'];
     $chatId = $input['message']['chat']['id'];
     $scheduleUpdateTime = SCHEDULE_UPDATE_HOUR * 3600 - $data[0]['timezone'];
     $scheduleUpdateTime < 0 && ($scheduleUpdateTime += 24 * 3600);

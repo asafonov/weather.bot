@@ -131,7 +131,7 @@ function isMessageWithPhoto ($msg) {
 }
 
 function getPhotoUrl ($msg) {
-  if (! isMessageWithPhoto($msg)) return null;
+  if (! isMessageWithPhoto($msg)) return false;
 
   $fileId = end($msg['message']['photo'])['file_id'];
   $getFileUrl = 'https://api.telegram.org/bot' . TOKEN . "/getFile?file_id={$fileId}";
@@ -142,6 +142,14 @@ function getPhotoUrl ($msg) {
   }
 
   return 'https://api.telegram.org/file/bot' . TOKEN . "/{$filePath['result']['file_path']}";
+}
+
+function getLocation ($msg) {
+  if (isset($msg['message']['location'])) {
+    return $msg['message']['location'];
+  } else {
+    return false;
+  }
 }
 
 function isCallbackQuery ($input) {
