@@ -237,7 +237,7 @@ function getListKeyboardMarkup ($chatId) {
 }
 
 function getForecastMessageAndData ($text, $chatId, $location = false) {
-  if (! $place && ! $location) {
+  if (! $text && ! $location) {
     return [[
       'text' => PLACE_ERROR_MESSAGE,
       'chat_id' => $chatId
@@ -246,7 +246,7 @@ function getForecastMessageAndData ($text, $chatId, $location = false) {
 
   $data = null;
 
-  if ($place) {
+  if ($text) {
     $place = preparePlace($text);
 
     if (! $place) {
