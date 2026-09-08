@@ -5,7 +5,7 @@ require_once('weather.php');
 require_once('richtext.php');
 
 function preparePlace ($place) {
-  $place = strtolower(preg_replace('/[\?\&\=]/g', '', $place));
+  $place = strtolower(preg_replace('/[\?\&\=]/', '', $place));
   return trim($place);
 }
 
