@@ -39,8 +39,8 @@ if (! isClientAllowed(isset($_GET['hash']) ? $_GET['hash'] : '', isset($_GET['ti
 }
 
 if (isset($_GET['place'])) {
-  $place = preg_replace('/[^A-z ]/', '', $_GET['place']);
-  $place = strtolower($place);
+  $place = strtolower(preg_replace('/[\?\&\=]/', '', $_GET['place']));
+  $place = trim($place);
   headers();
   die(json_encode(weather($place)));
 } else if (isset($_GET['lat']) && isset($_GET['lon'])) {
