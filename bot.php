@@ -290,7 +290,7 @@ function doCronLogic ($input) {
   $text = $input['message']['text'];
   $chatId = $input['message']['chat']['id'];
 
-  [$reply, $data] = getForecastMessageAndData($text, $chatId);
+  [$reply, $data] = getForecastMessageAndData($text, $chatId, getLocation($input));
   return $reply;
 }
 
@@ -351,7 +351,6 @@ function doLogic ($input) {
   }
 
   $location = getLocation($input);
-
   [$reply, $data] = getForecastMessageAndData($text, $chatId, $location);
 
   if (isset($data[0]['timezone'])) {
