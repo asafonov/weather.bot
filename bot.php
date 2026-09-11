@@ -135,6 +135,8 @@ function getEmojiByName ($name) {
   if ($name === 'sun_clouds') return emoji('26C5');
   if ($name === 'clouds') return emoji('2601');
   if ($name === 'thermo') return emoji('1F321');
+  if ($name === 'sunrise') return emoji('1F305');
+  if ($name === 'sunset') return emoji('1F307');
 }
 
 function getWeatherEmoji ($now) {
@@ -182,34 +184,35 @@ function makeSenseOfData ($data) {
   $richText = new RichText();
 
   $richText->h1("{$data['now']['place']}, {$emoji} {$data['now']['temp']}°C");
-  $richText->p(emoji('1F32C') . ": {$data['now']['wind_speed']}m/s, {$data['now']['wind_direction']}" . (isset($data['now']['gust']) && $data['now']['gust'] > 0 ? ", gusts: {$data['now']['gust']} m/s" : ''));
-  $richText->p(emoji('1F321') . ": {$data['now']['pressure']} mm Hg");
+  $richText->p(getEmojiByName('sunrise') . " {$data['now']['sunrise']} " . getEmojiByName('sunset') . " {$data['now']['sunset']}");
+  $richText->p(emoji('1F32C') . " {$data['now']['wind_speed']}m/s, {$data['now']['wind_direction']}" . (isset($data['now']['gust']) && $data['now']['gust'] > 0 ? ", gusts {$data['now']['gust']} m/s" : ''));
+  $richText->p(emoji('1F321') . " {$data['now']['pressure']} mm Hg");
 
-  $richText->h1("Later today: {$laterEmoji} {$words['today']['temp']}");
+  $richText->h1("Later today {$laterEmoji} {$words['today']['temp']}");
 
   if ($data['today']['total_rain']) {
-    $richText->p(getEmojiByName('rain') . ": {$words['today']['rain']}, {$data['today']['total_rain']}mm, max: {$data['today']['max_rain']}mm/h");
+    $richText->p(getEmojiByName('rain') . " {$words['today']['rain']}, {$data['today']['total_rain']}mm, max: {$data['today']['max_rain']}mm/h");
   }
 
   if ($data['today']['total_snow']) {
-    $richText->p(getEmojiByName('snow') . ": {$words['today']['snow']}, {$data['today']['total_snow']}mm, max: {$data['today']['max_snow']}mm/h");
+    $richText->p(getEmojiByName('snow') . " {$words['today']['snow']}, {$data['today']['total_snow']}mm, max: {$data['today']['max_snow']}mm/h");
   }
 
-  $richText->p(emoji('1F32C') . ": {$data['today']['wind_speed']}m/s, {$data['today']['wind_direction'][0]}" . (isset($data['today']['gust']) && $data['today']['gust'] > 0 ? ", gusts: {$data['today']['gust']} m/s" : ''));
-  $richText->p(emoji('1F321') . ": {$words['today']['pressure']} mm Hg");
+  $richText->p(emoji('1F32C') . " {$data['today']['wind_speed']}m/s, {$data['today']['wind_direction'][0]}" . (isset($data['today']['gust']) && $data['today']['gust'] > 0 ? ", gusts {$data['today']['gust']} m/s" : ''));
+  $richText->p(emoji('1F321') . " {$words['today']['pressure']} mm Hg");
 
-  $richText->h1("Tomorrow: {$tomorrowEmoji} {$words['tomorrow']['temp']}");
+  $richText->h1("Tomorrow {$tomorrowEmoji} {$words['tomorrow']['temp']}");
 
   if ($data['tomorrow']['total_rain']) {
-    $richText->p(getEmojiByName('rain') . ": {$words['tomorrow']['rain']}, {$data['tomorrow']['total_rain']}mm, max: {$data['tomorrow']['max_rain']}mm/h");
+    $richText->p(getEmojiByName('rain') . " {$words['tomorrow']['rain']}, {$data['tomorrow']['total_rain']}mm, max: {$data['tomorrow']['max_rain']}mm/h");
   }
 
   if ($data['tomorrow']['total_snow']) {
-    $richText->p(getEmojiByName('snow') . ": {$words['tomorrow']['snow']}, {$data['tomorrow']['total_snow']}mm, max: {$data['tomorrow']['max_snow']}mm/h");
+    $richText->p(getEmojiByName('snow') . " {$words['tomorrow']['snow']}, {$data['tomorrow']['total_snow']}mm, max: {$data['tomorrow']['max_snow']}mm/h");
   }
 
-  $richText->p(emoji('1F32C') . ": {$data['tomorrow']['wind_speed']}m/s, {$data['tomorrow']['wind_direction'][0]}" . (isset($data['tomorrow']['gust']) && $data['tomorrow']['gust'] > 0 ? ", gusts: {$data['tomorrow']['gust']} m/s" : ''));
-  $richText->p(emoji('1F321') . ": {$words['tomorrow']['pressure']} mm Hg");
+  $richText->p(emoji('1F32C') . " {$data['tomorrow']['wind_speed']}m/s, {$data['tomorrow']['wind_direction'][0]}" . (isset($data['tomorrow']['gust']) && $data['tomorrow']['gust'] > 0 ? ", gusts {$data['tomorrow']['gust']} m/s" : ''));
+  $richText->p(emoji('1F321') . " {$words['tomorrow']['pressure']} mm Hg");
 
   return $richText->get();
 }
