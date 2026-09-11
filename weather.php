@@ -94,6 +94,8 @@ function formatForecast ($now, $data) {
     $ret = [formatWeatherData($now)];
     $ret[0]['date'] = formatDate(time(), $data['city']['timezone']);
     $ret[0]['place'] = $data['city']['name'];
+    $ret[0]['sunrise'] = date('H:i', $data['city']['sunrise'] + $data['city']['timezone']);
+    $ret[0]['sunset'] = date('H:i', $data['city']['sunset'] + $data['city']['timezone']);
     $ret[0]['timezone'] = $data['city']['timezone'];
 
     for ($i = 0; $i < count($data['list']); ++$i) {
