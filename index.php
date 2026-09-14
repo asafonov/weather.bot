@@ -8,7 +8,7 @@ try {
   file_put_contents(WORKER_CACHE_PATH . "/last_input", $input);
   $data = json_decode($input, true);
   $chatId = isset($data['message']['chat']['id']) ? $data['message']['chat']['id'] : null;
-  $hasMessage = isset($data['message']['text']) || isset($data['message']['photo']);
+  $hasMessage = isset($data['message']['text']) || isset($data['message']['photo']) || isset($data['message']['location']);
 
   if (isCallbackQuery($data)) {
     $hasMessage = true;
