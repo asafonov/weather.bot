@@ -190,11 +190,11 @@ function makeSenseOfData ($data) {
 
   $richText->h1("Later today {$laterEmoji} {$words['today']['temp']}");
 
-  if ($data['today']['total_rain']) {
+  if ($data['today']['total_rain'] >= 0.5) {
     $richText->p(getEmojiByName('rain') . " {$words['today']['rain']}, {$data['today']['total_rain']}mm, max: {$data['today']['max_rain']}mm/h");
   }
 
-  if ($data['today']['total_snow']) {
+  if ($data['today']['total_snow'] >= 0.5) {
     $richText->p(getEmojiByName('snow') . " {$words['today']['snow']}, {$data['today']['total_snow']}mm, max: {$data['today']['max_snow']}mm/h");
   }
 
@@ -203,11 +203,11 @@ function makeSenseOfData ($data) {
 
   $richText->h1("Tomorrow {$tomorrowEmoji} {$words['tomorrow']['temp']}");
 
-  if ($data['tomorrow']['total_rain']) {
+  if ($data['tomorrow']['total_rain'] > 0.5) {
     $richText->p(getEmojiByName('rain') . " {$words['tomorrow']['rain']}, {$data['tomorrow']['total_rain']}mm, max: {$data['tomorrow']['max_rain']}mm/h");
   }
 
-  if ($data['tomorrow']['total_snow']) {
+  if ($data['tomorrow']['total_snow'] > 0.5) {
     $richText->p(getEmojiByName('snow') . " {$words['tomorrow']['snow']}, {$data['tomorrow']['total_snow']}mm, max: {$data['tomorrow']['max_snow']}mm/h");
   }
 
